@@ -20,6 +20,7 @@
   "homepage": "https://github.com/ChrisBarberRiley/twitter-profile-update#readme",
   "dependencies": {
     "dotenv": "^10.0.0",
+    "image-to-base64": "^2.2.0",
     "twit": "^2.2.11"
   }
 }
