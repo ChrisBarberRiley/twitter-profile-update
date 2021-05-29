@@ -1,0 +1,25 @@
+{
+  "name": "twitter-profile-update",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ChrisBarberRiley/twitter-profile-update.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ChrisBarberRiley/twitter-profile-update/issues"
+  },
+  "homepage": "https://github.com/ChrisBarberRiley/twitter-profile-update#readme",
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "twit": "^2.2.11"
+  }
+}
