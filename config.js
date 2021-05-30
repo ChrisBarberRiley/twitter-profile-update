@@ -1,15 +1,26 @@
 import dotenv from 'dotenv';
-import Twit from 'twit';
+import Twitter from 'twitter';
 
 dotenv.config();
 
-export const T = new Twit({
-  consumer_key: process.env.api_key,
-  consumer_secret: process.env.api_secret,
-  access_token: process.env.access_token,
-  access_token_secret: process.env.access_token_secret,
-  timeout_ms: 60 * 1000, // optional HTTP request timeout to apply to all requests.
-  strictSSL: true, // optional - requires SSL certificates to be valid.
-});
+// Twitter handle
+const HANDLE = '@chris_gbr';
 
-export default T;
+const credentials = {
+  consumer_key: process.env.consumer_key,
+  consumer_secret: process.env.consumer_secret,
+  access_token_key: process.env.access_token_key,
+  access_token_secret: process.env.access_token_secret,
+};
+
+export const client = new Twitter(credentials);
+// var params = { screen_name: 'chris_gbr' };
+// client.get(
+//   'statuses/user_timeline',
+//   params,
+//   function (error, tweets, response) {
+//     console.log(tweets);
+//   },
+// );
+
+export default client;
