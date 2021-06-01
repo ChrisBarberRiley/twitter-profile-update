@@ -20,6 +20,19 @@ const changeBanner = async (name) => {
         console.log('err', err);
         const json = response.toJSON();
         console.log(json.statusCode, json.headers, json.body);
+
+        try {
+          console.log('removing ', `./images/made/${name}`);
+          fs.unlinkSync(`./images/made/${name}`);
+
+          console.log('removing follower images');
+          const followerImages = fs.readdirSync('./images/followers/');
+          followerImages.map((img) => {
+            fs.unlinkSync(`./images/followers/${img}`);
+          });
+        } catch (error) {
+          console.log(error);
+        }
       },
     );
   } catch (err) {
@@ -53,7 +66,21 @@ const downloadImages = async (images) => {
   const promises = images.map(async (image) => {
     let name = path.basename(image);
     let input = (await axios({ url: image, responseType: 'arraybuffer' })).data;
-    await sharp(input).resize(80).toFile(`./images/followers/r-${name}`);
+
+    const roundedCorners = Buffer.from(
+      '<svg><rect x="0" y="0" width="80" height="80" rx="80" ry="80"/></svg>',
+    );
+
+    await sharp(input)
+      .resize(80, 80)
+      .composite([
+        {
+          input: roundedCorners,
+          blend: 'dest-in',
+        },
+      ])
+      .png()
+      .toFile(`./images/followers/r-${name}`);
   });
 
   return Promise.all(promises);
