@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/ChrisBarberRiley/twitter-profile-update#readme",
   "dependencies": {
+    "axios": "^0.21.1",
     "dotenv": "^10.0.0",
     "node-fetch": "^2.6.1",
     "sharp": "^0.28.3",

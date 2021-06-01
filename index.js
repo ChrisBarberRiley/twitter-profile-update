@@ -1,15 +1,15 @@
+import axios from 'axios';
 import fs from 'fs';
-import fetch from 'node-fetch';
 import path from 'path';
 import sharp from 'sharp';
 import client from './config.js';
 
-const changeBanner = async () => {
+const changeBanner = async (name) => {
   console.log('Updating banner!');
 
   try {
     const images = fs.readdirSync('./images');
-    const img = fs.readFileSync('./images/' + images[0], {
+    const img = fs.readFileSync(`./images/made/${name}`, {
       encoding: 'base64',
     });
 
@@ -49,47 +49,49 @@ const getRecentFollowers = async () => {
   // return res.ids;
 };
 
-const writeFileAsync = promisify(fs.writeFile);
-
-async function download(url, imageName) {
-  const response = await fetch(url);
-  const buffer = await response.buffer();
-  await writeFileAsync(imageName, buffer).then(() => {
-    console.log('finished downloading!');
+const downloadImages = async (images) => {
+  const promises = images.map(async (image) => {
+    let name = path.basename(image);
+    let input = (await axios({ url: image, responseType: 'arraybuffer' })).data;
+    await sharp(input).resize(80).toFile(`./images/followers/r-${name}`);
   });
-  await sharp(`./images/${imageName}`)
-    .resize(80)
-    .toFile(`./images/r-${imageName}`);
-}
+
+  return Promise.all(promises);
+};
 
 const drawImage = async (images) => {
   try {
-    images.map((image) => {
-      let name = path.basename(image);
-      download(image, `./images/${name}`);
-    });
+    await downloadImages(images);
 
     const name = Math.random();
-
+    console.log('images', images);
     const image = await sharp('./images/banner.jpg')
       .composite([
         {
-          input: `./images/r-${path.basename(images[0])}`,
+          input: `./images/followers/r-${path.basename(images[0])}`,
           top: 155,
           left: 1310,
+          width: 60,
+          height: 60,
         },
         {
-          input: `./images/r-${path.basename(images[1])}`,
+          input: `./images/followers/r-${path.basename(images[1])}`,
           top: 265,
           left: 1310,
+          width: 60,
+          height: 60,
         },
         {
-          input: `./images/r-${path.basename(images[2])}`,
+          input: `./images/followers/r-${path.basename(images[2])}`,
           top: 380,
           left: 1310,
+          width: 60,
+          height: 60,
         },
       ])
-      .toFile(`${name}.png`);
+      .toFile(`./images/made/${name}.png`);
+
+    changeBanner(`${name}.png`); //update banner
   } catch (error) {
     console.log('error', error);
   }
