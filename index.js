@@ -1,4 +1,6 @@
 import fs from 'fs';
+import fetch from 'node-fetch';
+import path from 'path';
 import sharp from 'sharp';
 import client from './config.js';
 
@@ -47,25 +49,46 @@ const getRecentFollowers = async () => {
   // return res.ids;
 };
 
+const writeFileAsync = promisify(fs.writeFile);
+
+async function download(url, imageName) {
+  const response = await fetch(url);
+  const buffer = await response.buffer();
+  await writeFileAsync(imageName, buffer).then(() => {
+    console.log('finished downloading!');
+  });
+  await sharp(`./images/${imageName}`)
+    .resize(80)
+    .toFile(`./images/r-${imageName}`);
+}
+
 const drawImage = async (images) => {
   try {
-    // console.log('images', images);
-    // mergeImages(
-    //   [
-    //     { src: './images/banner.jpg', x: 0, y: 0 },
-    //     { src: images[0], width: 64, height: 64, x: -200, y: 0 },
-    //     { src: images[1], width: 64, height: 64, x: -600, y: 0 },
-    //     { src: images[2], width: 64, height: 64, x: -900, y: 0 },
-    //   ],
-    //   {
-    //     Canvas: Canvas,
-    //     Image: Image,
-    //   },
-    // ).then((b64) => console.log('b64', b64));
+    images.map((image) => {
+      let name = path.basename(image);
+      download(image, `./images/${name}`);
+    });
 
     const name = Math.random();
-    await sharp('./images/banner.jpg')
-      .composite([{ input: images[2], top: 450, left: 450 }])
+
+    const image = await sharp('./images/banner.jpg')
+      .composite([
+        {
+          input: `./images/r-${path.basename(images[0])}`,
+          top: 155,
+          left: 1310,
+        },
+        {
+          input: `./images/r-${path.basename(images[1])}`,
+          top: 265,
+          left: 1310,
+        },
+        {
+          input: `./images/r-${path.basename(images[2])}`,
+          top: 380,
+          left: 1310,
+        },
+      ])
       .toFile(`${name}.png`);
   } catch (error) {
     console.log('error', error);
