@@ -103,7 +103,7 @@ const drawImage = async (images) => {
   }
 };
 
-const getRecentFollowers = async () => {
+const initUpdateBanner = async () => {
   try {
     const res = await client.get('followers/list', {
       screen_name: 'chris_gbr',
@@ -125,4 +125,6 @@ const getRecentFollowers = async () => {
   // return res.ids;
 };
 
-getRecentFollowers();
+setInterval(() => {
+  initUpdateBanner();
+}, 60000);
