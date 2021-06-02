@@ -124,7 +124,7 @@ const initUpdateBanner = async () => {
 
   // return res.ids;
 };
-
+initUpdateBanner();
 setInterval(() => {
   initUpdateBanner();
 }, 60000);
